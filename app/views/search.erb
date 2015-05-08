@@ -1,5 +1,9 @@
 <h2>keyword: <%= params[:keyword] %></h2>
 
+<div>
+  <%= auction_list.first[:number] %> - <%= auction_list.last[:number] %> / <%= total %>
+</div>
+
 <table class="table table-striped">
   <tr>
     <th>#
@@ -24,3 +28,19 @@
   </tr>
   <% end %>
 </table>
+
+<nav>
+  <ul class="pagination">
+    <% first_number = auction_list.first[:number] %>
+    <% current_page = ((first_number - 1) / per_page).to_i + 1 %>
+    <% last_page = (total / per_page).to_i + 1 %>
+    <% last_page.times.each do |i| %>
+
+    <% if i + 1 == current_page %>
+    <li class="active"><%= link_to(i + 1, "./#") %></li>
+    <% else %>
+    <li><%= link_to(i+1, "/search?keyword=#{keyword}&page=#{i+1}") %></li>
+    <% end %>
+    <% end %>
+  </ul>
+</nav>

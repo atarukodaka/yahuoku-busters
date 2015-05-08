@@ -30,32 +30,13 @@ module YahuokuBusters
 
     ## search
     post '/search' do
-      url = "http://auctions.search.yahoo.co.jp/search?p=#{ERB::Util.url_encode(params[:keyword])}"
-      doc = Nokogiri::HTML.parse(open(url))
-
-      i = 1
-      
-      ar = doc.search("div.a1wrp").map do |element|
-        ## title
-        elem = element.search("h3/a")
-        title = elem.inner_html
-        href = elem.attribute('href').value
-        href =~ /page(\d+)\.auctions.yahoo.co.jp/
-        server_number = $1
-        href =~ %r{auctions\.yahoo\.co\.jp/jp/auction/([a-z0-9][\d]+)}
-        a_id = $1
-        url = href
-
-        ## user
-        elem = element.search("div.a4/p/a")[1]
-        href = elem.attribute('href').value
-        href =~ %r{auctions\.yahoo\.co\.jp/user/([a-zA-Z0-9\-_]+)}
-        user = $1
-        {number: i, url: url, a_id: a_id, server_number: server_number, title: title, user: user}.tap {i = i + 1}
-      end
-      erb :search, locals: {keyword: params[:keyword], auction_list: ar}
+      show_search_auctions(params[:keyword], 1)
     end
 
+    get '/search' do
+      show_search_auctions(params[:keyword], params[:page])
+    end
+    
     ## functions
     def show_user_auctions(user, page=1)
       per_page = 20  # per page
@@ -78,6 +59,38 @@ module YahuokuBusters
       total = $1.to_i
       erb :user, {locals: {user: user, auction_list: ar, total: total, per_page: per_page}}
     end
+
+    def show_search_auctions(keyword, page=1)
+      per_page = 20
+      b = (page.to_i-1) * per_page + 1
+      i = b
+
+      url = "http://auctions.search.yahoo.co.jp/search?p=#{ERB::Util.url_encode(keyword)}&b=#{b}"
+      doc = Nokogiri::HTML.parse(open(url))
+
+      ar = doc.search("div.a1wrp").map do |element|
+        ## title
+        elem = element.search("h3/a")
+        title = elem.inner_html
+        href = elem.attribute('href').value
+        href =~ /page(\d+)\.auctions.yahoo.co.jp/
+        server_number = $1
+        href =~ %r{auctions\.yahoo\.co\.jp/jp/auction/([a-z0-9][\d]+)}
+        a_id = $1
+        url = href
+
+        ## user
+        elem = element.search("div.a4/p/a")[1]
+        href = elem.attribute('href').value
+        href =~ %r{auctions\.yahoo\.co\.jp/user/([a-zA-Z0-9\-_]+)}
+        user = $1
+        {number: i, url: url, a_id: a_id, server_number: server_number, title: title, user: user}.tap {i = i + 1}
+      end
+      doc.search("p.total").inner_html =~ /(\d+)/
+      total = $1.to_i
+      erb :search, locals: {keyword: params[:keyword], auction_list: ar, total: total, per_page: per_page}
+    end
+    
   end  ## class App
 end
 
