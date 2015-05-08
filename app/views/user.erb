@@ -1,9 +1,17 @@
 
 <h2>user: <%= link_to(h(user), "http://sellinglist.auctions.yahoo.co.jp/user/#{h(user)}") %></h2>
 
-<%= auction_list.first[:number] %> - <%= auction_list.last[:number] %> / <%= total %>
+<div>
+  <%= auction_list.first[:number] %> - <%= auction_list.last[:number] %> / <%= total %>
+</div>
 
-<table>
+<table class="table table-striped">
+  <tr>
+    <th>#
+    <th>auction ID
+    <th>タイトル
+    <th>違反報告
+  </tr>
   <% auction_list.each do |hash| %>
   <tr>
     <td><%= hash[:number] %>
@@ -19,15 +27,18 @@
   <% end %>
 </table>
 
-<div class="pager">
-  <% first_number = auction_list.first[:number] %>
-  <% current_page = ((first_number - 1) / per_page).to_i + 1 %>
-  <% last_page = (total / per_page).to_i + 1 %>
-  <% last_page.times.each do |i| %>
-  <% if i + 1 == current_page %>
-  <%= i + 1 %>
-  <% else %>
-  <%= link_to(i+1, "/user/#{user}/#{i+1}") %>
-  <% end %>
-  <% end %>
-</div>
+<nav>
+  <ul class="pagination">
+    <% first_number = auction_list.first[:number] %>
+    <% current_page = ((first_number - 1) / per_page).to_i + 1 %>
+    <% last_page = (total / per_page).to_i + 1 %>
+    <% last_page.times.each do |i| %>
+
+    <% if i + 1 == current_page %>
+    <li class="active"><%= link_to(i + 1, "./#") %></li>
+    <% else %>
+    <li><%= link_to(i+1, "/user/#{user}/#{i+1}") %></li>
+    <% end %>
+    <% end %>
+  </ul>
+</nav>

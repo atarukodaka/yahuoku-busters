@@ -50,38 +50,4 @@ module YahuokuBusters
     end
   end  ## class App
 end
-__END__
-@@layout
-
-<html>
-  <head>
-  <title>ヤフオクバスターズ</title>
-</head>
-  <body>
-  <%= yield %>
-
-  <hr/>
-  <footer><a href="/">top</a></footer>
-  </body>
-</html>
-
-
-@@top
-
-<h2>ヤフオク違反申告支援ツール：ヤフオクバスターズ</h2>
-
-  <% form_tag("/user", method: "post") do %>
-ユーザー名<%= text_field_tag(:user, size: 20) %>
-
-   
-<%= submit_tag("view") %>
-<% end %>
-
-<h2>recommended users to apply for review of violation</h2>
-
-<ul>
-<% recommended_users.each do |user| %>
-  <li><a href="/user/<%= user %>"><%= user %></a></li>
-<% end %>
-</ul>
 
