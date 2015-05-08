@@ -1,0 +1,9 @@
+---
+:orm: none
+:test: cucumber
+:mock: none
+:script: none
+:renderer: erb
+:stylesheet: none
+:namespace: YahuokuBusters
+:migration_format: number
