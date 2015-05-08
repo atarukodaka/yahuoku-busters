@@ -13,7 +13,7 @@ module YahuokuBusters
     include ERB::Util
     
     get '/' do
-      erb :top, locals: {recommended_users: ["no_regret_y", "miyuria0905", "gurei2200"] }
+      erb :top, locals: {recommended_users: ["no_regret_y", "miyuria0905", "gurei2200", "ryobochi2"] }
     end
 
     ## user
@@ -36,7 +36,7 @@ module YahuokuBusters
     get '/search' do
       show_search_auctions(params[:keyword], params[:page])
     end
-    
+
     ## functions
     def show_user_auctions(user, page=1)
       per_page = 20  # per page
