@@ -1,15 +1,24 @@
-  <% form_tag("/user", method: "post") do %>
+
+
+<h2>ユーザ毎違反報告</h2>
+
+<% form_tag("/user", method: "post") do %>
 ユーザー名<%= text_field_tag(:user, size: 20) %>
 
    
 <%= submit_tag("view") %>
 <% end %>
 
-<h2>recommended users to apply for review of violation</h2>
-
+<h3>違反申告推奨出品者</h3>
 <ul>
 <% recommended_users.each do |user| %>
   <li><a href="/user/<%= user %>"><%= user %></a></li>
 <% end %>
 </ul>
 
+<h2>キーワード検索</h2>
+
+<% form_tag("/search", method: "post") do %>
+<%= text_field_tag(:keyword, size: 20) %>
+<%= submit_tag("search") %>
+<% end %>
