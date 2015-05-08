@@ -55,9 +55,10 @@ __END__
 
 @@top
 
-<h2>user selection</h2>
-<% form_tag("/user", method: "post") do %>
-User: <%= text_field_tag(:user, size: 20) %>
+<h2>ヤフオク違反申告支援ツール：ヤフオクバスターズ</h2>
+
+  <% form_tag("/user", method: "post") do %>
+ユーザー名<%= text_field_tag(:user, size: 20) %>
 <%= submit_tag("view") %>
 <% end %>
 
