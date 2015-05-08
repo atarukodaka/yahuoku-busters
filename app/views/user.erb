@@ -1,0 +1,33 @@
+
+<h2>user: <%= link_to(h(user), "http://sellinglist.auctions.yahoo.co.jp/user/#{h(user)}") %></h2>
+
+<%= auction_list.first[:number] %> - <%= auction_list.last[:number] %> / <%= total %>
+
+<table>
+  <% auction_list.each do |hash| %>
+  <tr>
+    <td><%= hash[:number] %>
+    <td><%= hash[:a_id] %>
+    <td><%= link_to(hash[:title], hash[:url]) %>
+    <td>
+      <form method=post action="http://navi<%= hash[:server_number] %>.auctions.yahoo.co.jp/jp/config/review">
+	<input type=hidden name=aID value="<%= hash[:a_id] %>">
+	<input type=hidden name=rating value="1001">
+	<input type=submit value="違反報告">
+      </form>
+  </tr>
+  <% end %>
+</table>
+
+<div class="pager">
+  <% first_number = auction_list.first[:number] %>
+  <% current_page = ((first_number - 1) / per_page).to_i + 1 %>
+  <% last_page = (total / per_page).to_i + 1 %>
+  <% last_page.times.each do |i| %>
+  <% if i + 1 == current_page %>
+  <%= i + 1 %>
+  <% else %>
+  <%= link_to(i+1, "/user/#{user}/#{i+1}") %>
+  <% end %>
+  <% end %>
+</div>

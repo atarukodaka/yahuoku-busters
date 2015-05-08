@@ -18,27 +18,37 @@ module YahuokuBusters
       redirect "/user/#{user}"
     end
     get '/user/:user' do
+      show_user_auctions(params[:user], 1)
+    end
+    get '/user/:user/:page' do
+      show_user_auctions(params[:user], params[:page].to_i)      
+    end
+
+    def show_user_auctions(user, page=1)
       require 'nokogiri'
       require 'open-uri'
-      
-      user = params[:user]
 
-      url = "http://sellinglist.auctions.yahoo.co.jp/user/#{h(user)}"
+      per_page = 20  # per page
+      b = (page-1) * per_page + 1  # start
+      i = b
+      url = "http://sellinglist.auctions.yahoo.co.jp/user/#{h(user)}?n=#{per_page}&b=#{b}"
       doc = Nokogiri::HTML.parse(open(url))
-      require 'pry-byebug'
-#      binding.pry
+
       ar = doc.search("div#list01//.a1//h3//a").map do |elem|
         url = elem.attribute('href').value
         url =~ %r{/([a-z][0-9]+)}
         a_id = $1
         URI.split(url)[2] =~ /page(\d+)/
         server_number = $1
-        {url: url, a_id: a_id, server_number: server_number, title: elem.inner_html}
+        {number: i, url: url, a_id: a_id, server_number: server_number, title: elem.inner_html}.tap { i = i + 1}
       end
 
-      erb :user, {locals: {user: user, auction_list: ar}}
+      #doc.search("div#AS-m19/h1.t/em").inner_html =~ /(\d+)/
+      doc.search("div.sbox_2/div.pu/select/option").first.inner_html =~ /(\d+)/
+      total = $1.to_i
+      erb :user, {locals: {user: user, auction_list: ar, total: total, per_page: per_page}}
     end
-  end
+  end  ## class App
 end
 __END__
 @@layout
@@ -49,6 +59,9 @@ __END__
 </head>
   <body>
   <%= yield %>
+
+  <hr/>
+  <footer><a href="/">top</a></footer>
   </body>
 </html>
 
@@ -59,6 +72,8 @@ __END__
 
   <% form_tag("/user", method: "post") do %>
 ユーザー名<%= text_field_tag(:user, size: 20) %>
+
+   
 <%= submit_tag("view") %>
 <% end %>
 
@@ -69,22 +84,4 @@ __END__
   <li><a href="/user/<%= user %>"><%= user %></a></li>
 <% end %>
 </ul>
-
-@@user
-<h2>user: <%= h(user) %></h2>
-
-<table>
-<% auction_list.each do |hash| %>
-<tr>
-<td><%= hash[:a_id] %>
-<td><%= link_to(hash[:title], hash[:url]) %>
-<td>
-<form method=post action="http://navi<%= hash[:server_number] %>.auctions.yahoo.co.jp/jp/config/review">
-  <input type=hidden name=aID value="<%= hash[:a_id] %>">
-  <input type=hidden name=rating value="1001">
-  <input type=submit value="違反報告">
-</form>
-</tr>
-<% end %>
-</table>
 
