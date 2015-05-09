@@ -37,6 +37,9 @@ module YahuokuBusters
       show_search_auctions(params[:keyword], params[:page])
     end
 
+    get '/about' do
+      erb :about
+    end
     ## functions
     def show_user_auctions(user, page=1)
       per_page = 20  # per page

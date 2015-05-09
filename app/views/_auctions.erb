@@ -1,0 +1,36 @@
+<div>
+  <%= auction_list.first[:number] %> - <%= auction_list.last[:number] %> / <%= total %>
+</div>
+
+<table class="table table-striped">
+  <tr>
+    <th>#
+    <th>auction ID
+    <th>タイトル
+    <th>出品者
+    <th>違反報告
+    <th>報告状況
+  </tr>
+  <tr>
+  <% auction_list.each do |hash| %>
+    <td><%= hash[:number] %>
+    <td><%= hash[:a_id] %>
+    <td><%= link_to(hash[:title], hash[:url]) %>
+    <td>
+      <%= link_to(hash[:user], "/user/#{hash[:user]}") %>
+    <td>
+      <form method=post action="http://navi<%= hash[:server_number] %>.auctions.yahoo.co.jp/jp/config/review">
+	<input type=hidden name=aID value="<%= hash[:a_id] %>">
+	<input type=hidden name=rating value="1001">
+	<input type=submit value="違反報告" onclick="document.cookie = 'applied_at_<%= hash[:a_id] %>=<%= Time.now %>';">
+      </form>
+    <td>
+      <% if applied_at = request.cookies["applied_at_#{hash[:a_id]}"] %>
+      <%= applied_at %>
+      <% else %>
+      -
+      <% end%>
+  </tr>
+  <% end %>
+</table>
+
