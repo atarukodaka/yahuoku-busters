@@ -48,7 +48,11 @@ module YahuokuBusters
       url = "http://sellinglist.auctions.yahoo.co.jp/user/#{h(user)}?n=#{per_page}&b=#{b}"
       doc = Nokogiri::HTML.parse(open(url))
 
-      ar = doc.search("div#list01//.a1//h3//a").map do |elem|
+      ar = doc.search("div#list01//tr/td.a1//h3//a").map do |elem|
+      #ar = doc.search("div#list01//tr").map do |element|
+      #binding.pry
+      #elem = element.search("td.a1//h3//a")
+        
         url = elem.attribute('href').value
         url =~ %r{/([a-z0-9][0-9]+)}
         a_id = $1
@@ -57,7 +61,6 @@ module YahuokuBusters
         {number: i, url: url, a_id: a_id, server_number: server_number, title: elem.inner_html}.tap { i = i + 1}
       end
 
-      #doc.search("div#AS-m19/h1.t/em").inner_html =~ /(\d+)/
       doc.search("div.sbox_2/div.pu/select/option").first.inner_html =~ /(\d+)/
       total = $1.to_i
       erb :user, {locals: {user: user, auction_list: ar, total: total, per_page: per_page}}
