@@ -62,7 +62,7 @@ module YahuokuBusters
       end
 
       doc.search("div.sbox_2/div.pu/select/option").first.inner_html =~ /([\d,]+)/
-      total = $1.gsub(/,/, '').to_i
+      total = $1.to_s.gsub(/,/, '').to_i
       erb :user, {locals: {user: user, auction_list: ar, total: total, per_page: per_page}}
     end
 
