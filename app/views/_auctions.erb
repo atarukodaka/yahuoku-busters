@@ -1,10 +1,15 @@
+<% auction_list ||= [] %>
+
 <div>
+  <% if ! auction_list.empty? %>
   <%= auction_list.first[:number] %> - <%= auction_list.last[:number] %> / <%= total %>
+  <% end %>
 </div>
 
 <table class="table table-striped">
   <tr>
     <th>#
+    <th>
     <th>auction ID
     <th>タイトル
     <th>出品者
@@ -13,50 +18,45 @@
   </tr>
   <tr>
   <% auction_list.each_with_index do |hash, i| %>
+  <form method=post action="http://navi<%= hash[:server_number] %>.auctions.yahoo.co.jp/jp/config/review" id="form_<%= hash[:a_id]%>">
     <td><%= hash[:number] %>
+    <td><%= check_box_tag("cb_#{hash[:a_id]}") %>
     <td><%= hash[:a_id] %>
     <td><%= link_to(hash[:title], hash[:url]) %>
     <td>
       <%= link_to(hash[:user], "/user/#{hash[:user]}") %>
     <td>
-      <form method=post action="http://navi<%= hash[:server_number] %>.auctions.yahoo.co.jp/jp/config/review" id="form_<%= hash[:number]%>">
+
 	<input type=hidden name=aID value="<%= hash[:a_id] %>">
 	<input type=hidden name=rating value="1001">
-	<input type=submit value="違反報告" onclick="myFunc(<%= hash[:number] %>, '<%= hash[:a_id] %>'); ">
-      </form>
-    <td id="applied_at_<%= hash[:number] %>">
+	<input type=submit value="違反報告" onclick="report_abuse('<%= hash[:a_id] %>'); ">
+    <td id="applied_at_<%= hash[:a_id] %>">
       <% if applied_at = request.cookies["applied_at_#{hash[:a_id]}"] %>
       <%= applied_at %>
       <% else %>
       -
       <% end%>
+    </td>
+  </form>
   </tr>
   <% end %>
 </table>
 
 <script language="javascript">
 <!--
-function set_cookie(a_id)
+function report_abuse(a_id)
 {
-}
-function update_applied_at(number)
-{
-}
-function myFunc(number, a_id)
-{
-set_cookie(a_id);
-
 now = new Date;
 formatted_date = now.toLocaleString();
 document.cookie = 'applied_at_' + a_id + '=' + encodeURIComponent(formatted_date);
 //alert('applied_at_' + a_id + '=' + encodeURIComponent(formatted_date));
 
-applied_at_cell = document.getElementById("applied_at_" + number);
+applied_at_cell = document.getElementById("applied_at_" + a_id);
 applied_at_cell.innerHTML = formatted_date;
 
-var win = window.open("", "subwin", "width=800,height=600,status=no,scrollbars=yes,resizable=yes,menubar=no,toolbar=no,titlebar=no,dependent=yes");
-form = document.getElementById("form_" + number);
-form.target = "subwin";
+var win = window.open("", "subwin_" + a_id, "width=800,height=600,status=no,scrollbars=yes,resizable=yes,menubar=no,toolbar=no,titlebar=no,dependent=yes");
+form = document.getElementById("form_" + a_id);
+form.target = "subwin_" + a_id;
 form.submit();
 //-->
 }

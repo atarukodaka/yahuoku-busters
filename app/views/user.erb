@@ -5,8 +5,8 @@
 
 <nav>
   <ul class="pagination">
-    <% first_number = auction_list.first[:number] %>
-    <% current_page = ((first_number - 1) / per_page).to_i + 1 %>
+    <% first_number = auction_list.first && auction_list.first[:number] %>
+    <% current_page = ((first_number.to_i - 1) / per_page).to_i + 1 %>
     <% last_page = (total / per_page).to_i + 1 %>
     <% last_page.times.each do |i| %>
 

@@ -5,7 +5,8 @@
 <% form_tag("/user", method: "post") do %>
 <div class="form-group">
   <label>ユーザー名
-  <%= text_field_tag(:user, size: 20) %>
+    <%= text_field_tag(:user, size: 20) %>
+  </label>
 </div>
    
 <%= submit_tag("view") %>
@@ -13,8 +14,11 @@
 
 <h3>違反申告推奨出品者</h3>
 <ul>
-<% recommended_users.each do |user| %>
-  <li><a href="/user/<%= user %>"><%= user %></a></li>
+  <% recommended_users.each do |user| %>
+  <li>
+    <a href="/user/<%= user %>"><%= user %></a>
+    <a href="http://sellinglist.auctions.yahoo.co.jp/user/<%= user %>">(y)</a>    
+  </li>
 <% end %>
 </ul>
 

@@ -61,8 +61,8 @@ module YahuokuBusters
         {number: i, url: url, a_id: a_id, server_number: server_number, title: elem.inner_html}.tap { i = i + 1}
       end
 
-      doc.search("div.sbox_2/div.pu/select/option").first.inner_html =~ /(\d+)/
-      total = $1.to_i
+      doc.search("div.sbox_2/div.pu/select/option").first.inner_html =~ /([\d,]+)/
+      total = $1.gsub(/,/, '').to_i
       erb :user, {locals: {user: user, auction_list: ar, total: total, per_page: per_page}}
     end
 
